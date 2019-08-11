@@ -36,7 +36,7 @@ def extract_icon(app_path):
 # Mieux vaut donc extraire une section plus ou moins centrale de
 # l'icône. Un nombre tiré au hasard permet de décaler la zone d’extraction
 # d'un essai à l'autre, ce qui peut produire des résultats différents.
-# (La ligne 57 peut être décommentée pour observer les variations.)
+# (La ligne 54 peut être décommentée pour observer les variations.)
 # On transforme ensuite l'image en liste de pixels, que l'on regroupe
 # en clusters. On trouve le centre des clusters, puis on sélectionne
 # le cluster dominant.
@@ -51,7 +51,7 @@ def get_color(icon_path, k, img_size, random):
     right = (width + img_size)/2+random
     bottom = (height + img_size)/2+random
     crop = icon.crop((left, top, right, bottom))
-    crop.save("output.jpg")
+    #crop.save("output.jpg")
     
     pixels = list(crop.getdata())
     cluster = KMeans(n_clusters = k)
@@ -62,8 +62,7 @@ def get_color(icon_path, k, img_size, random):
     return list(dominant)
 
 # CRÉATION DE L'ARRIÈRE-PLAN
-# À partir de la couleur dominante, on crée un arrière-plan de
-# 1 200 pixels de côté.
+# À partir de la couleur dominante, on crée un arrière-plan.
 def create_bg(color, bg_width):
     red = int(color[0])
     green = int(color[1])
