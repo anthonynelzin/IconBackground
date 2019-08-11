@@ -8,9 +8,6 @@
     European Union Public License 1.2
 """
 
-# @TODO
-# Rendre le script plus robuste (petites icônes, couleurs étranges…)
-
 import biplist, getopt, os, sys
 from collections import Counter
 from PIL import Image, ImageDraw
@@ -43,7 +40,7 @@ def extract_icon(app_path):
 # On transforme ensuite l'image en liste de pixels, que l'on regroupe
 # en clusters. On trouve le centre des clusters, puis on sélectionne
 # le cluster dominant.
-def get_color(icon_path, k=5, img_size=250, random=250):
+def get_color(icon_path, k, img_size, random):
     icon = Image.open(icon_path)
     icon = icon.convert("RGB")
 
@@ -54,7 +51,7 @@ def get_color(icon_path, k=5, img_size=250, random=250):
     right = (width + img_size)/2+random
     bottom = (height + img_size)/2+random
     crop = icon.crop((left, top, right, bottom))
-    #crop.save("output.jpg")
+    crop.save("output.jpg")
     
     pixels = list(crop.getdata())
     cluster = KMeans(n_clusters = k)
@@ -67,11 +64,11 @@ def get_color(icon_path, k=5, img_size=250, random=250):
 # CRÉATION DE L'ARRIÈRE-PLAN
 # À partir de la couleur dominante, on crée un arrière-plan de
 # 1 200 pixels de côté.
-def create_bg(color, bg_width=2000, bg_height=1200):
+def create_bg(color, bg_width):
     red = int(color[0])
     green = int(color[1])
     blue = int(color[2])
-    bg = Image.new("RGB", (bg_width, bg_height), (red, green, blue))
+    bg = Image.new("RGB", (bg_width, int(bg_width//1.6)), (red, green, blue))
 
     return bg
 
@@ -101,8 +98,18 @@ def main():
         elif opt == "-a":
             app_path = arg
             icon_path = extract_icon(app_path)
-            color = get_color(icon_path)
-            bg = create_bg(color)
+
+            icon = Image.open(icon_path)
+            width, height = icon.size
+            if width <= 256:
+                color = get_color(icon_path, 2, 50, 50)
+                bg = create_bg(color, 500)
+            elif 256 < width <= 512:
+                color = get_color(icon_path, 3, 100, 100)
+                bg = create_bg(color, 1000)
+            else:
+                color = get_color(icon_path, 5, 250, 250)
+                bg = create_bg(color, 2000)
             paste_icon(bg, icon_path)
 
 if __name__ == '__main__':

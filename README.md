@@ -10,7 +10,7 @@ IconBackground takes this app:
 
 And makes this image:
 
-![](example-2.jpg)
+![](example-2.png)
 
 The colour of the background is the dominant colour of the central part of the original icon. IconBackground might produce different results on different occasions, as the position of the central part is slightly shifted from launch to launch.
 
