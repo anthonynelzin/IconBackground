@@ -16,7 +16,7 @@ The colour of the background is the dominant colour of the central part of the o
 
 ## Usage
 
-	python3 icon-background.py -a <path_of_the_app>
+	python3 icon-background.py path_of_the_app
 	
 ## Requirements
 
