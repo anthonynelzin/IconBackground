@@ -6,11 +6,11 @@ IconBackground extracts the icon from a macOS app and puts it on a colour-matche
 
 IconBackground takes this app:
 
-![](example1.jpg)
+![](example-1.jpg)
 
 And makes this image:
 
-![](example2.jpg)
+![](example-2.jpg)
 
 The colour of the background is the dominant colour of the central part of the original icon. IconBackground might produce different results on different occasions, as the position of the central part is slightly shifted from launch to launch.
 
