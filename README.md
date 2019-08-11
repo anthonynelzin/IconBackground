@@ -1,6 +1,6 @@
 # IconBackground
 
-IconBackground extracts the icon from a macOS app and puts it on a colour-matched background.
+IconBackground extracts the icon from a macOS app and puts it on a colour-matched background. This script should be useful for anyone writing about apps.
 
 ## Example
 
@@ -12,7 +12,7 @@ And makes this image:
 
 ![](example2.jpg)
 
-The colour of the background is the dominant colour of the central part of the original icon. The exact tint might change on two consecutive passes, as the position of the central part is slightly shifted from launch to launch.
+The colour of the background is the dominant colour of the central part of the original icon. IconBackground might produce different results on different occasions, as the position of the central part is slightly shifted from launch to launch.
 
 ## Usage
 
