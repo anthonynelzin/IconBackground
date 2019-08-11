@@ -8,7 +8,7 @@
     European Union Public License 1.2
 """
 
-import biplist, getopt, os, sys
+import argparse, biplist, os
 from collections import Counter
 from PIL import Image, ImageDraw
 from random import randrange
@@ -83,33 +83,24 @@ def paste_icon(bg, icon_path):
     bg.save("output.png")
 
 def main():
-    help = "icon-background.py -a <path_to_the_app>"
-
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "ha:") # Getopt pourrait être remplacé par argparse
-    except getopt.GetoptError:
-        print(help)
-        sys.exit(2)
-    for opt, arg in opts:
-        if opt == "-h":
-            print(help)
-            sys.exit()
-        elif opt == "-a":
-            app_path = arg
-            icon_path = extract_icon(app_path)
-
-            icon = Image.open(icon_path)
-            width, height = icon.size
-            if width <= 256:
-                color = get_color(icon_path, 2, 50, 50)
-                bg = create_bg(color, 500)
-            elif 256 < width <= 512:
-                color = get_color(icon_path, 3, 100, 100)
-                bg = create_bg(color, 1000)
-            else:
-                color = get_color(icon_path, 5, 250, 250)
-                bg = create_bg(color, 2000)
-            paste_icon(bg, icon_path)
+    parser = argparse.ArgumentParser(description="Create a hero image from a macOS app.")
+    parser.add_argument("app", help="Path to the app.")
+    
+    args = parser.parse_args()
+    app_path = args.app
+    icon_path = extract_icon(app_path)
+    icon = Image.open(icon_path)
+    width = icon.width
+    if width <= 256:
+        color = get_color(icon_path, 2, 50, 50)
+        bg = create_bg(color, 500)
+    elif 256 < width <= 512:
+        color = get_color(icon_path, 3, 100, 100)
+        bg = create_bg(color, 1000)
+    else:
+        color = get_color(icon_path, 5, 250, 250)
+        bg = create_bg(color, 2000)
+    paste_icon(bg, icon_path)
 
 if __name__ == '__main__':
     main()
