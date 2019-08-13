@@ -8,7 +8,7 @@
     European Union Public License 1.2
 """
 
-import argparse, biplist, os
+import argparse, biplist, os, sys
 from collections import Counter
 from PIL import Image, ImageDraw
 from random import randrange
@@ -83,12 +83,26 @@ def paste_icon(bg, icon_path):
     bg.save("output.png")
 
 def main():
-    parser = argparse.ArgumentParser(description="Create a hero image from a macOS app.")
-    parser.add_argument("app", help="Path to the app.")
-    
+    parser = argparse.ArgumentParser(description="Create a hero image from a macOS app or an app icon.")
+    parser.add_argument("-a", "--app", help="Path to the macOS app.")
+    parser.add_argument("-i", "--icon", help="Path to the icon file.")
     args = parser.parse_args()
-    app_path = args.app
-    icon_path = extract_icon(app_path)
+
+    # Convertit le namespace args en dict, puis vérifie les valeurs.
+    # any() retourne Faux si aucune valeur n'est itérable, autrement
+    # dit si aucun argument n'a été défini. On peut alors interrompre
+    # l’exécution. Sinon, on poursuit en définissant le chemin de
+    # l'icône, extraite d'une app ou piochée parmi les fichiers.
+    if not any(vars(args).values()):
+        sys.exit("\nYou must specify the path to an app (-a) or an icon (-i).\nCheck `icon-background.py -h` for more info.\n")
+    elif args.app:
+        icon_path = extract_icon(args.app)
+    elif args.icon:
+        icon_path = args.icon
+
+    # L'icône passe alors par les différentes étapes d'assemblage.
+    # La taille du fichier final (et la finesse du clustering) dépend
+    # de la taille de l'icône, une approche naïve faute de mieux.
     icon = Image.open(icon_path)
     width = icon.width
     if width <= 256:
