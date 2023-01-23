@@ -34,8 +34,7 @@ def extract_icon(app_path):
 # Les icônes possède un masque de transparence, qu'il faut aplatir.
 # Les zones noires issues de l'applatissement faussent les calculs.
 # Mieux vaut donc extraire une section plus ou moins centrale de
-# l'icône. Un nombre tiré au hasard permet de décaler la zone d’extraction
-# d'un essai à l'autre, ce qui peut produire des résultats différents.
+# l'icône. Un nombre tiré au hasard permet de décaler la zone d’extraction d'un essai à l'autre, ce qui peut produire des résultats différents.
 # (La ligne 54 peut être décommentée pour observer les variations.)
 # On transforme ensuite l'image en liste de pixels, que l'on regroupe
 # en clusters. On trouve le centre des clusters, puis on sélectionne
@@ -75,17 +74,18 @@ def create_bg(color, bg_width):
 # Enfin, on réunit l'icône et l'arrière-plan. On repart de l'icône originale
 # avec son masque de transparence. On la cale au milieu de l'arrière-plan, 
 # et on colle les deux. Le résultat est écrit sur le disque.
-def paste_icon(bg, icon_path):
+def paste_icon(bg, icon_path, i):
     icon = Image.open(icon_path)
-
+    
     position = ((bg.width - icon.width) // 2, (bg.height - icon.height) // 2)
     bg.paste(icon, position, icon)
-    bg.save("output.png")
+    bg.save("output-" + str(i) + ".png")
 
 def main():
     parser = argparse.ArgumentParser(description="Create a hero image from a macOS app or an app icon.")
     parser.add_argument("-a", "--app", help="Path to the macOS app.")
-    parser.add_argument("-i", "--icon", help="Path to the icon file.")
+    parser.add_argument("-i", "--icon", help="Path to an icon (PNG or ICNS file with alpha layer).")
+    parser.add_argument("-n", "--number", help="Number of iterations (default = 1).")
     args = parser.parse_args()
 
     # Convertit le namespace args en dict, puis vérifie les valeurs.
@@ -103,18 +103,26 @@ def main():
     # L'icône passe alors par les différentes étapes d'assemblage.
     # La taille du fichier final (et la finesse du clustering) dépend
     # de la taille de l'icône, une approche naïve faute de mieux.
-    icon = Image.open(icon_path)
-    width = icon.width
-    if width <= 256:
-        color = get_color(icon_path, 2, 50, 50)
-        bg = create_bg(color, 500)
-    elif 256 < width <= 512:
-        color = get_color(icon_path, 3, 100, 100)
-        bg = create_bg(color, 1000)
+    if args.number:
+        number = int(args.number)
     else:
-        color = get_color(icon_path, 5, 250, 250)
-        bg = create_bg(color, 2000)
-    paste_icon(bg, icon_path)
+        number = 1
+    
+    for i in range(number):
+    	icon = Image.open(icon_path)
+    	width = icon.width
+    	
+    	if width <= 256:
+            color = get_color(icon_path, 2, 50, 50)
+            bg = create_bg(color, 500)
+    	elif 256 < width <= 512:
+            color = get_color(icon_path, 3, 100, 100)
+            bg = create_bg(color, 1000)
+    	else:
+            color = get_color(icon_path, 5, 250, 250)
+            bg = create_bg(color, 2000)
+    
+    	paste_icon(bg, icon_path, i)
 
 if __name__ == '__main__':
     main()
